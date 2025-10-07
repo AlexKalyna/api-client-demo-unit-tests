@@ -12,7 +12,7 @@ export class AxiosClient {
   private circuitBreaker?: CircuitBreaker;
   private retryConfig: ReturnType<typeof createRetryConfig>;
 
-  constructor(private config: HttpClientConfig = {}) {
+  constructor(config: HttpClientConfig = {}) {
     this.retryConfig = createRetryConfig(config.retryConfig);
 
     if (config.circuitBreakerConfig) {
@@ -21,14 +21,19 @@ export class AxiosClient {
       );
     }
 
-    this.axiosInstance = axios.create({
-      baseURL: config.baseURL,
+    const axiosConfig: any = {
       timeout: config.timeout || 10000,
       headers: {
         'Content-Type': 'application/json',
         ...config.headers,
       },
-    });
+    };
+
+    if (config.baseURL) {
+      axiosConfig.baseURL = config.baseURL;
+    }
+
+    this.axiosInstance = axios.create(axiosConfig);
 
     this.axiosInstance.interceptors.request.use(
       (config) => config,
@@ -67,7 +72,7 @@ export class AxiosClient {
     return this.request<T>({
       method: 'GET',
       url,
-      params,
+      ...(params && { params }),
     });
   }
 
@@ -115,12 +120,18 @@ export class AxiosClient {
   }
 
   private buildAxiosConfig(requestConfig: RequestConfig): AxiosRequestConfig {
-    const config: AxiosRequestConfig = {
-      method: requestConfig.method.toLowerCase() as any,
+    const config: any = {
+      method: requestConfig.method.toLowerCase(),
       url: requestConfig.url,
-      headers: requestConfig.headers,
-      timeout: requestConfig.timeout,
     };
+
+    if (requestConfig.headers) {
+      config.headers = requestConfig.headers;
+    }
+
+    if (requestConfig.timeout) {
+      config.timeout = requestConfig.timeout;
+    }
 
     if (requestConfig.params) {
       config.params = requestConfig.params;

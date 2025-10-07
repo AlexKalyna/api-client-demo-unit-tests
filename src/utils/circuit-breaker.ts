@@ -1,9 +1,9 @@
 import type {
   CircuitBreakerConfig,
-  CircuitBreakerState,
   CircuitBreakerStats,
   ApiError,
 } from '../types/index.js';
+import { CircuitBreakerState } from '../types/index.js';
 
 export class CircuitBreaker {
   private state: CircuitBreakerState = CircuitBreakerState.CLOSED;
@@ -47,8 +47,8 @@ export class CircuitBreaker {
       state: this.state,
       failureCount: this.failureCount,
       successCount: this.successCount,
-      lastFailureTime: this.lastFailureTime,
-      nextAttemptTime: this.nextAttemptTime,
+      ...(this.lastFailureTime && { lastFailureTime: this.lastFailureTime }),
+      ...(this.nextAttemptTime && { nextAttemptTime: this.nextAttemptTime }),
     };
   }
 
@@ -56,8 +56,8 @@ export class CircuitBreaker {
     this.state = CircuitBreakerState.CLOSED;
     this.failureCount = 0;
     this.successCount = 0;
-    this.lastFailureTime = undefined;
-    this.nextAttemptTime = undefined;
+    delete this.lastFailureTime;
+    delete this.nextAttemptTime;
     this.halfOpenCalls = 0;
   }
 
@@ -76,8 +76,8 @@ export class CircuitBreaker {
         this.state = CircuitBreakerState.CLOSED;
         this.failureCount = 0;
         this.successCount = 0;
-        this.lastFailureTime = undefined;
-        this.nextAttemptTime = undefined;
+        delete this.lastFailureTime;
+        delete this.nextAttemptTime;
       }
     } else {
       this.failureCount = 0;
