@@ -1,9 +1,9 @@
-import type {
-  CircuitBreakerConfig,
-  CircuitBreakerStats,
-  ApiError,
+import {
+  CircuitBreakerState,
+  type CircuitBreakerConfig,
+  type CircuitBreakerStats,
+  type ApiError,
 } from '../types/index.js';
-import { CircuitBreakerState } from '../types/index.js';
 
 export class CircuitBreaker {
   private state: CircuitBreakerState = CircuitBreakerState.CLOSED;
@@ -13,7 +13,10 @@ export class CircuitBreaker {
   private nextAttemptTime?: number;
   private halfOpenCalls = 0;
 
-  constructor(private config: CircuitBreakerConfig) {}
+  // eslint-disable-next-line no-unused-vars
+  constructor(private config: CircuitBreakerConfig) {
+    // Config is used in methods like shouldAttemptReset, onSuccess, onFailure
+  }
 
   async execute<T>(fn: () => Promise<T>): Promise<T> {
     if (this.state === CircuitBreakerState.OPEN) {
@@ -107,7 +110,7 @@ export class CircuitBreaker {
 }
 
 export const createCircuitBreakerConfig = (
-  overrides: Partial<CircuitBreakerConfig> = {},
+  overrides: Partial<CircuitBreakerConfig> = {}
 ): CircuitBreakerConfig => {
   return {
     failureThreshold: 5,

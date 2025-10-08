@@ -18,7 +18,7 @@ export interface RetryConfig {
   baseDelay: number;
   maxDelay: number;
   backoffMultiplier: number;
-  retryCondition?: (error: ApiError) => boolean;
+  retryCondition?: (error: ApiError) => boolean; // eslint-disable-line no-unused-vars
 }
 
 export interface CircuitBreakerConfig {
@@ -29,9 +29,12 @@ export interface CircuitBreakerConfig {
 }
 
 export enum CircuitBreakerState {
+  // eslint-disable-next-line no-unused-vars
   CLOSED = 'CLOSED',
+  // eslint-disable-next-line no-unused-vars
   OPEN = 'OPEN',
-  HALF_OPEN = 'HALF_OPEN'
+  // eslint-disable-next-line no-unused-vars
+  HALF_OPEN = 'HALF_OPEN',
 }
 
 export interface CircuitBreakerStats {
