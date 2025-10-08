@@ -1,0 +1,12 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.0
+
+# Ignore specific vulnerabilities (use sparingly and document why)
+# ignore: {}
+#   'SNYK-JS-LODASH-567746':
+#     - '*':
+#         reason: 'Lodash vulnerability in dev dependencies only'
+#         expires: '2024-12-31T23:59:59.999Z'
+
+# Patch specific vulnerabilities
+# patch: {}

@@ -55,3 +55,9 @@ pids/
 
 # Husky
 .husky/_
+
+# Security
+.snyk-auth
+snyk-report.json
+security-report.html
+vulnerability-db/
