@@ -1,0 +1,92 @@
+name: Security Scan
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  security-scan:
+    name: Security Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
+
+      - name: Run audit-ci
+        run: npm run audit:ci
+
+      - name: Run Snyk to check for vulnerabilities
+        if: ${{ secrets.SNYK_TOKEN != '' }}
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=low --json-file-output=snyk-results.json
+
+      - name: Upload Snyk results to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: snyk.sarif
+
+      - name: Comment PR with Snyk results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            try {
+              const snykResults = JSON.parse(fs.readFileSync('snyk-results.json', 'utf8'));
+              if (snykResults.vulnerabilities && snykResults.vulnerabilities.length > 0) {
+                const comment = `## 🔒 Security Scan Results
+                
+                **${snykResults.vulnerabilities.length} vulnerabilities found**
+                
+                ${snykResults.vulnerabilities.map(vuln => 
+                  `- **${vuln.severity.toUpperCase()}**: ${vuln.title} (${vuln.packageName})`
+                ).join('\n')}
+                
+                Please review and fix these vulnerabilities before merging.`;
+                
+                github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: comment
+                });
+              }
+            } catch (error) {
+              console.log('No Snyk results to comment');
+            }
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: moderate
+          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC
