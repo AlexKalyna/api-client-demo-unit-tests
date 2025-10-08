@@ -4,7 +4,12 @@ import type {
   HttpClientConfig,
   RequestConfig,
 } from '../types/index.js';
-import { withRetry, createRetryConfig, CircuitBreaker, createCircuitBreakerConfig } from '../utils/index.js';
+import {
+  withRetry,
+  createRetryConfig,
+  CircuitBreaker,
+  createCircuitBreakerConfig,
+} from '../utils/index.js';
 
 export class FetchClient {
   private circuitBreaker?: CircuitBreaker;
@@ -15,12 +20,14 @@ export class FetchClient {
 
     if (config.circuitBreakerConfig) {
       this.circuitBreaker = new CircuitBreaker(
-        createCircuitBreakerConfig(config.circuitBreakerConfig),
+        createCircuitBreakerConfig(config.circuitBreakerConfig)
       );
     }
   }
 
-  async request<T = unknown>(requestConfig: RequestConfig): Promise<ApiResponse<T>> {
+  async request<T = unknown>(
+    requestConfig: RequestConfig
+  ): Promise<ApiResponse<T>> {
     const url = this.buildUrl(requestConfig.url);
     const options = this.buildRequestOptions(requestConfig);
 
@@ -42,7 +49,7 @@ export class FetchClient {
 
   async get<T = unknown>(
     url: string,
-    params?: Record<string, string | number | boolean>,
+    params?: Record<string, string | number | boolean>
   ): Promise<ApiResponse<T>> {
     return this.request<T>({
       method: 'GET',
@@ -51,7 +58,10 @@ export class FetchClient {
     });
   }
 
-  async post<T = unknown>(url: string, data?: unknown): Promise<ApiResponse<T>> {
+  async post<T = unknown>(
+    url: string,
+    data?: unknown
+  ): Promise<ApiResponse<T>> {
     return this.request<T>({
       method: 'POST',
       url,
@@ -74,7 +84,10 @@ export class FetchClient {
     });
   }
 
-  async patch<T = unknown>(url: string, data?: unknown): Promise<ApiResponse<T>> {
+  async patch<T = unknown>(
+    url: string,
+    data?: unknown
+  ): Promise<ApiResponse<T>> {
     return this.request<T>({
       method: 'PATCH',
       url,
@@ -90,7 +103,10 @@ export class FetchClient {
     this.circuitBreaker?.reset();
   }
 
-  private buildUrl(url: string, params?: Record<string, string | number | boolean>): string {
+  private buildUrl(
+    url: string,
+    params?: Record<string, string | number | boolean>
+  ): string {
     let fullUrl = url;
 
     if (this.config.baseURL) {
@@ -120,7 +136,9 @@ export class FetchClient {
       headers,
     };
 
-    const signal = this.createAbortSignal(requestConfig.timeout || this.config.timeout);
+    const signal = this.createAbortSignal(
+      requestConfig.timeout || this.config.timeout
+    );
     if (signal) {
       options.signal = signal;
     }
@@ -156,7 +174,9 @@ export class FetchClient {
     }
 
     if (!response.ok) {
-      const error = new Error(`HTTP ${response.status}: ${response.statusText}`) as ApiError;
+      const error = new Error(
+        `HTTP ${response.status}: ${response.statusText}`
+      ) as ApiError;
       error.status = response.status;
       error.statusText = response.statusText;
       error.response = {

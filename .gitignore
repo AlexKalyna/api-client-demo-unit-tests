@@ -49,3 +49,9 @@ pids/
 
 # Vitest
 .vitest/
+
+# Prettier
+.prettiercache
+
+# Husky
+.husky/_

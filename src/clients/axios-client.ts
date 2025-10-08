@@ -1,11 +1,20 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
+import axios, {
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+} from 'axios';
 import type {
   ApiResponse,
   ApiError,
   HttpClientConfig,
   RequestConfig,
 } from '../types/index.js';
-import { withRetry, createRetryConfig, CircuitBreaker, createCircuitBreakerConfig } from '../utils/index.js';
+import {
+  withRetry,
+  createRetryConfig,
+  CircuitBreaker,
+  createCircuitBreakerConfig,
+} from '../utils/index.js';
 
 export class AxiosClient {
   private axiosInstance: AxiosInstance;
@@ -17,7 +26,7 @@ export class AxiosClient {
 
     if (config.circuitBreakerConfig) {
       this.circuitBreaker = new CircuitBreaker(
-        createCircuitBreakerConfig(config.circuitBreakerConfig),
+        createCircuitBreakerConfig(config.circuitBreakerConfig)
       );
     }
 
@@ -36,22 +45,25 @@ export class AxiosClient {
     this.axiosInstance = axios.create(axiosConfig);
 
     this.axiosInstance.interceptors.request.use(
-      (config) => config,
-      (error) => Promise.reject(this.convertAxiosError(error)),
+      config => config,
+      error => Promise.reject(this.convertAxiosError(error))
     );
 
     this.axiosInstance.interceptors.response.use(
-      (response) => response,
-      (error) => Promise.reject(this.convertAxiosError(error)),
+      response => response,
+      error => Promise.reject(this.convertAxiosError(error))
     );
   }
 
-  async request<T = unknown>(requestConfig: RequestConfig): Promise<ApiResponse<T>> {
+  async request<T = unknown>(
+    requestConfig: RequestConfig
+  ): Promise<ApiResponse<T>> {
     const axiosConfig = this.buildAxiosConfig(requestConfig);
 
     const executeRequest = async (): Promise<ApiResponse<T>> => {
       try {
-        const response: AxiosResponse<T> = await this.axiosInstance.request(axiosConfig);
+        const response: AxiosResponse<T> =
+          await this.axiosInstance.request(axiosConfig);
         return this.convertAxiosResponse(response);
       } catch (error) {
         throw this.convertAxiosError(error);
@@ -67,7 +79,7 @@ export class AxiosClient {
 
   async get<T = unknown>(
     url: string,
-    params?: Record<string, string | number | boolean>,
+    params?: Record<string, string | number | boolean>
   ): Promise<ApiResponse<T>> {
     return this.request<T>({
       method: 'GET',
@@ -76,7 +88,10 @@ export class AxiosClient {
     });
   }
 
-  async post<T = unknown>(url: string, data?: unknown): Promise<ApiResponse<T>> {
+  async post<T = unknown>(
+    url: string,
+    data?: unknown
+  ): Promise<ApiResponse<T>> {
     return this.request<T>({
       method: 'POST',
       url,
@@ -99,7 +114,10 @@ export class AxiosClient {
     });
   }
 
-  async patch<T = unknown>(url: string, data?: unknown): Promise<ApiResponse<T>> {
+  async patch<T = unknown>(
+    url: string,
+    data?: unknown
+  ): Promise<ApiResponse<T>> {
     return this.request<T>({
       method: 'PATCH',
       url,

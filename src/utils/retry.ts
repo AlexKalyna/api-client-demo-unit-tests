@@ -13,7 +13,8 @@ const defaultRetryCondition = (error: ApiError): boolean => {
 };
 
 const calculateDelay = (attempt: number, config: RetryConfig): number => {
-  const exponentialDelay = config.baseDelay * Math.pow(config.backoffMultiplier, attempt - 1);
+  const exponentialDelay =
+    config.baseDelay * Math.pow(config.backoffMultiplier, attempt - 1);
   const jitter = Math.random() * 0.1 * exponentialDelay;
   const delay = Math.min(exponentialDelay + jitter, config.maxDelay);
 
@@ -21,12 +22,15 @@ const calculateDelay = (attempt: number, config: RetryConfig): number => {
 };
 
 const sleep = (ms: number): Promise<void> => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 };
 
-export const withRetry = async <T>(fn: () => Promise<T>, config: RetryConfig): Promise<T> => {
+export const withRetry = async <T>(
+  fn: () => Promise<T>,
+  config: RetryConfig
+): Promise<T> => {
   const retryCondition = config.retryCondition || defaultRetryCondition;
-  let lastError: ApiError;
+  let lastError: ApiError | undefined;
 
   for (let attempt = 1; attempt <= config.maxRetries + 1; attempt++) {
     try {
@@ -47,10 +51,15 @@ export const withRetry = async <T>(fn: () => Promise<T>, config: RetryConfig): P
     }
   }
 
-  throw lastError!;
+  if (lastError) {
+    throw lastError;
+  }
+  throw new Error('Retry failed but no error was captured');
 };
 
-export const createRetryConfig = (overrides: Partial<RetryConfig> = {}): RetryConfig => {
+export const createRetryConfig = (
+  overrides: Partial<RetryConfig> = {}
+): RetryConfig => {
   return {
     maxRetries: 3,
     baseDelay: 1000,
