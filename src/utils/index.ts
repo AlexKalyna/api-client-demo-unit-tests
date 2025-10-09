@@ -1,5 +1,2 @@
-export { withRetry, createRetryConfig } from './retry.js';
-export {
-  CircuitBreaker,
-  createCircuitBreakerConfig,
-} from './circuit-breaker.js';
+export { withRetry, createRetryConfig } from './retry';
+export { CircuitBreaker, createCircuitBreakerConfig } from './circuit-breaker';

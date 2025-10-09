@@ -61,3 +61,6 @@ pids/
 snyk-report.json
 security-report.html
 vulnerability-db/
+
+# Project tracking (not committed)
+PROJECT_TRACKING.md
