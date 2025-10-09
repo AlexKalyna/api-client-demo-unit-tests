@@ -13,6 +13,8 @@ jobs:
   security-scan:
     name: Security Vulnerability Scan
     runs-on: ubuntu-latest
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,30 +35,16 @@ jobs:
         run: npm run audit:ci
 
       - name: Run Snyk to check for vulnerabilities
-        if: ${{ secrets.SNYK_TOKEN != '' }}
+        if: ${{ env.SNYK_TOKEN != '' }}
+        id: snyk
         uses: snyk/actions/node@master
         continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --severity-threshold=low --json-file-output=snyk-results.json --sarif --sarif-file=snyk.sarif
-
-      - name: Debug - List files after Snyk
-        if: always() && secrets.SNYK_TOKEN != ''
-        run: |
-          echo "Files in current directory:"
-          ls -la
-          echo "Checking for SARIF file:"
-          if [ -f "snyk.sarif" ]; then
-            echo "snyk.sarif exists"
-            ls -la snyk.sarif
-          else
-            echo "snyk.sarif does not exist"
-          fi
+          args: --sarif-file-output=snyk.sarif --json-file-output=snyk-results.json
 
       - name: Upload Snyk results to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
-        if: always() && secrets.SNYK_TOKEN != '' && hashFiles('snyk.sarif') != ''
+        if: ${{ always() && hashFiles('snyk.sarif') != '' }}
         with:
           sarif_file: snyk.sarif
 
