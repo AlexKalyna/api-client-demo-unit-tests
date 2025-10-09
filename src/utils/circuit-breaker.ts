@@ -3,7 +3,8 @@ import {
   type CircuitBreakerConfig,
   type CircuitBreakerStats,
   type ApiError,
-} from '../types/index.js';
+} from '@/types/index';
+import { TIMEOUTS } from '@/constants/timeouts';
 
 export class CircuitBreaker {
   private state: CircuitBreakerState = CircuitBreakerState.CLOSED;
@@ -114,8 +115,8 @@ export const createCircuitBreakerConfig = (
 ): CircuitBreakerConfig => {
   return {
     failureThreshold: 5,
-    recoveryTimeout: 60000,
-    monitoringPeriod: 60000,
+    recoveryTimeout: TIMEOUTS.SIXTY_SECONDS,
+    monitoringPeriod: TIMEOUTS.SIXTY_SECONDS,
     halfOpenMaxCalls: 3,
     ...overrides,
   };

@@ -8,13 +8,15 @@ import type {
   ApiError,
   HttpClientConfig,
   RequestConfig,
-} from '../types/index.js';
+  CircuitBreakerStats,
+} from '@/types/index';
+import { TIMEOUTS } from '@/constants/timeouts';
 import {
   withRetry,
   createRetryConfig,
   CircuitBreaker,
   createCircuitBreakerConfig,
-} from '../utils/index.js';
+} from '@/utils/index';
 
 export class AxiosClient {
   private axiosInstance: AxiosInstance;
@@ -30,8 +32,8 @@ export class AxiosClient {
       );
     }
 
-    const axiosConfig: any = {
-      timeout: config.timeout || 10000,
+    const axiosConfig: AxiosRequestConfig = {
+      timeout: config.timeout || TIMEOUTS.TEN_SECONDS,
       headers: {
         'Content-Type': 'application/json',
         ...config.headers,
@@ -125,7 +127,7 @@ export class AxiosClient {
     });
   }
 
-  getCircuitBreakerStats() {
+  getCircuitBreakerStats(): CircuitBreakerStats | undefined {
     return this.circuitBreaker?.getStats();
   }
 
@@ -138,7 +140,7 @@ export class AxiosClient {
   }
 
   private buildAxiosConfig(requestConfig: RequestConfig): AxiosRequestConfig {
-    const config: any = {
+    const config: AxiosRequestConfig = {
       method: requestConfig.method.toLowerCase(),
       url: requestConfig.url,
     };

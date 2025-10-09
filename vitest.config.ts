@@ -1,6 +1,18 @@
 import { defineConfig } from 'vitest/config';
+import path from 'path';
+import { TIMEOUTS } from './src/constants/timeouts.js';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@types': path.resolve(__dirname, './src/types'),
+      '@utils': path.resolve(__dirname, './src/utils'),
+      '@clients': path.resolve(__dirname, './src/clients'),
+      '@constants': path.resolve(__dirname, './src/constants'),
+      '@tests': path.resolve(__dirname, './__tests__'),
+    },
+  },
   test: {
     globals: true,
     environment: 'node',
@@ -12,19 +24,19 @@ export default defineConfig({
         'dist/',
         '**/*.d.ts',
         '**/*.config.*',
-        '**/coverage/**'
+        '**/coverage/**',
       ],
       thresholds: {
         global: {
           branches: 90,
           functions: 90,
           lines: 90,
-          statements: 90
-        }
-      }
+          statements: 90,
+        },
+      },
     },
-    testTimeout: 10000,
-    hookTimeout: 10000,
-    teardownTimeout: 10000
-  }
+    testTimeout: TIMEOUTS.TEN_SECONDS,
+    hookTimeout: TIMEOUTS.TEN_SECONDS,
+    teardownTimeout: TIMEOUTS.TEN_SECONDS,
+  },
 });
