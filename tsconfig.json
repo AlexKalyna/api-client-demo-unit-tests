@@ -33,9 +33,9 @@
       "@utils/*": ["src/utils/*"],
       "@clients/*": ["src/clients/*"],
       "@constants/*": ["src/constants/*"],
-      "@tests/*": ["__tests__/*"]
+      "@tests/*": ["tests/*"]
     }
   },
-  "include": ["src/**/*", "__tests__/**/*", "*.config.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "include": ["src/**/*", "tests/**/*", "*.config.ts", "security.config.js"],
+  "exclude": ["node_modules", "dist"]
 }
