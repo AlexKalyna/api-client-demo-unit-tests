@@ -108,7 +108,7 @@ jobs:
         run: npm ci
 
       - name: Run Snyk security scan
-        if: ${{ secrets.SNYK_TOKEN != '' }}
+        if: "${{ env.SNYK_TOKEN != '' }}"
         uses: snyk/actions/node@master
         continue-on-error: true
         env:
