@@ -1,4 +1,5 @@
-import type { RetryConfig, ApiError } from '../types/index.js';
+import type { RetryConfig, ApiError } from '@/types/index';
+import { DELAYS } from '@/constants/timeouts';
 
 const defaultRetryCondition = (error: ApiError): boolean => {
   if (error.isNetworkError || error.isTimeoutError) {
@@ -62,8 +63,8 @@ export const createRetryConfig = (
 ): RetryConfig => {
   return {
     maxRetries: 3,
-    baseDelay: 1000,
-    maxDelay: 10000,
+    baseDelay: DELAYS.ONE_SECOND,
+    maxDelay: DELAYS.TEN_SECONDS,
     backoffMultiplier: 2,
     ...overrides,
   };

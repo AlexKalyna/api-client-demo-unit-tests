@@ -3,13 +3,14 @@ import type {
   ApiError,
   HttpClientConfig,
   RequestConfig,
-} from '../types/index.js';
+  CircuitBreakerStats,
+} from '@/types/index';
 import {
   withRetry,
   createRetryConfig,
   CircuitBreaker,
   createCircuitBreakerConfig,
-} from '../utils/index.js';
+} from '@/utils/index';
 
 export class FetchClient {
   private circuitBreaker?: CircuitBreaker;
@@ -95,7 +96,7 @@ export class FetchClient {
     });
   }
 
-  getCircuitBreakerStats() {
+  getCircuitBreakerStats(): CircuitBreakerStats | undefined {
     return this.circuitBreaker?.getStats();
   }
 
