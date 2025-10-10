@@ -4,7 +4,7 @@ import {
   createCircuitBreakerConfig,
 } from '@/utils/circuit-breaker';
 import { CircuitBreakerState } from '@/types/index';
-import { DELAYS } from '@/constants/timeouts';
+import { RETRY_CONFIG } from '@/constants/timeouts';
 
 describe('CircuitBreaker', () => {
   let circuitBreaker: CircuitBreaker;
@@ -14,8 +14,8 @@ describe('CircuitBreaker', () => {
     vi.useFakeTimers();
     config = createCircuitBreakerConfig({
       failureThreshold: 3,
-      recoveryTimeout: DELAYS.ONE_SECOND,
-      monitoringPeriod: DELAYS.FIVE_SECONDS,
+      recoveryTimeout: RETRY_CONFIG.BASE_DELAY,
+      monitoringPeriod: RETRY_CONFIG.MAX_DELAY,
       halfOpenMaxCalls: 5, // Allow more calls than failure threshold
     });
     circuitBreaker = new CircuitBreaker(config);
@@ -97,8 +97,8 @@ describe('CircuitBreaker', () => {
     // Create a specific config for this test where success threshold > call limit
     const testConfig = createCircuitBreakerConfig({
       failureThreshold: 5, // Need 5 successes to close
-      recoveryTimeout: DELAYS.ONE_SECOND,
-      monitoringPeriod: DELAYS.FIVE_SECONDS,
+      recoveryTimeout: RETRY_CONFIG.BASE_DELAY,
+      monitoringPeriod: RETRY_CONFIG.MAX_DELAY,
       halfOpenMaxCalls: 3, // But only allow 3 calls
     });
     const testCircuitBreaker = new CircuitBreaker(testConfig);
