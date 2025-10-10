@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import path from 'path';
-import { TIMEOUTS } from './src/constants/timeouts';
+import { HTTP_CONFIG } from './src/constants/timeouts';
 
 export default defineConfig({
   resolve: {
@@ -35,8 +35,8 @@ export default defineConfig({
         },
       },
     },
-    testTimeout: TIMEOUTS.TEN_SECONDS,
-    hookTimeout: TIMEOUTS.TEN_SECONDS,
-    teardownTimeout: TIMEOUTS.TEN_SECONDS,
+    testTimeout: HTTP_CONFIG.DEFAULT_TIMEOUT,
+    hookTimeout: HTTP_CONFIG.DEFAULT_TIMEOUT,
+    teardownTimeout: HTTP_CONFIG.DEFAULT_TIMEOUT,
   },
 });

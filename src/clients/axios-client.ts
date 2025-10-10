@@ -10,7 +10,7 @@ import type {
   RequestConfig,
   CircuitBreakerStats,
 } from '@/types/index';
-import { TIMEOUTS } from '@/constants/timeouts';
+import { HTTP_CONFIG } from '@/constants/timeouts';
 import {
   withRetry,
   createRetryConfig,
@@ -33,7 +33,7 @@ export class AxiosClient {
     }
 
     const axiosConfig: AxiosRequestConfig = {
-      timeout: config.timeout || TIMEOUTS.TEN_SECONDS,
+      timeout: config.timeout || HTTP_CONFIG.DEFAULT_TIMEOUT,
       headers: {
         'Content-Type': 'application/json',
         ...config.headers,
