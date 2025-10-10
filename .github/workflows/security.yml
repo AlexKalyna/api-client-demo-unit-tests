@@ -13,6 +13,10 @@ jobs:
   security-scan:
     name: Security Vulnerability Scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: write
     env:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     steps:

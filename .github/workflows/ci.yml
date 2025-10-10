@@ -94,6 +94,9 @@ jobs:
   security:
     name: Security Scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     env:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     steps:
